@@ -17,7 +17,11 @@ pip install pyTelegramBotAPI
 
 pip install requests
 
-Залезаем в фаел с помощью блокнота и изменяем bot token
+Залезаем в фаел с помощью блокнота и изменяем bot token на токен от botfather Телеграм
+
+name  любое имя аккаунта
+
+token_work Ключ доступа (для выполнения заданий) от https://ytmonster.ru/api/
 
 Запускаем!
 
