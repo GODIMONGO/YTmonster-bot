@@ -16,3 +16,9 @@ https://ytmonster.ru/
 pip install pyTelegramBotAPI
 
 pip install requests
+
+Залезаем в фаел с помощью блокнота и изменяем bot token
+
+Запускаем!
+
+Ура!
