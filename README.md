@@ -13,24 +13,37 @@ https://ytmonster.ru/
 
 Для Windows 7: https://www.python.org/ftp/python/3.8.9/python-3.8.9.exe
 
+После установки будет надпись add to path нажимаем и только после этого продолжаем.
+
 В командной строке прописываем: 
 
 pip install pyTelegramBotAPI
 
 pip install requests
 
-Залезаем в фаел с помощью блокнота и изменяем bot token на токен от botfather Телеграм
+cd  и папка с файлом 
 
-name  любое имя аккаунта
+python3 main.py 
 
-token_work Ключ доступа (для выполнения заданий) от https://ytmonster.ru/api/
-
-Запускаем!
+Вводим всё что нужно.
 
 Ура!
+
+Если фаел exe виндовс считает вирусом то добавьте этот фаел в исключения
+
+Это не проблема в файле а проблема в защитнике виндовс!
 
 Так же с обновлением 1.0 добавили возможность запускать exe и не тратить время на установку пайтон!
 
 Фаел exe выходит первым после выходит .py
 
-Спасибо за помощь: https://github.com/s2-name
+Спасибо за помощь: 
+https://github.com/s2-name
+
+https://t.me/pyTelegramBotAPI_talks_ru
+
+https://t.me/slair
+
+Мой канал:
+
+https://t.me/GODIMONGO
