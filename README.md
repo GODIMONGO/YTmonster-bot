@@ -21,9 +21,11 @@ pip install pyTelegramBotAPI
 
 pip install requests
 
+pip install speedtest-cli
+
 cd  и папка с файлом 
 
-python3 main.py 
+python3  (фаел)
 
 Вводим всё что нужно.
 
