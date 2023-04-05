@@ -17,11 +17,13 @@ https://ytmonster.ru/
 
 В командной строке прописываем: 
 
-pip install pyTelegramBotAPI
+pip install PyTelegramBotApi
 
 pip install requests
 
 pip install speedtest-cli
+
+pip install ping3
 
 cd  и папка с файлом 
 
