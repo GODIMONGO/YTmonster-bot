@@ -13,7 +13,7 @@ mes = None
 values = {}
 task_tg = None
 tokens = ['', '', '']
-Versoin = '3.4'
+Versoin = '3.4.1'
 Change_log = '\n1. Добавлено закрытие клиентов' \
              '\n2. Переделаны кнопки' \
              '\n3. Исправлены некоторые синтаксические ошибки' \
@@ -200,7 +200,9 @@ def callback_worker(call):
         bot.send_message(call.from_user.id,
                          'Эта задача займет некоторое время \nTelegram канал разработчика: https://t.me/GODIMONGO')
         req, err, ID_CLIENT = yt_monster.ytmonster_req(token_ytmonster, 'get_client')
-        if err != 'ok':
+        if req == 'not_work':
+            bot.send_message(call.from_user.id, text='Нет рабочих клиентов.', reply_markup=keyboard_back)
+        elif err != 'ok':
             bot.send_message(call.from_user.id, text='Произашла ошибка:' + str(err), reply_markup=keyboard_back)
         else:
             keyboard_client = types.InlineKeyboardMarkup(row_width=1)
@@ -244,9 +246,10 @@ def callback_worker(call):
         print('Сообщение отправлено!')
 
     elif call.data in ['vk', 'inst', 'tiktok', 'tg', 'paid', 'ytview', 'ytlike', 'ytsubs', 'ytcomm']:
+        bot.send_message(call.from_user.id, text='Идет обработка запроса! Пожалуйста ожидайте..')
+        bot.answer_callback_query(call.id)
         req, err = yt_monster.ytmonster_req(token_ytmonster, 'my_task', call.data)
         bot.send_message(call.from_user.id, text=req, reply_markup=keyboard_back)
-        bot.answer_callback_query(call.id)
         print('Сообщение отправлено!')
 
     elif call.data == 'send_log':
