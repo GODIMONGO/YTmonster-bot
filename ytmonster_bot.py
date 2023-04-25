@@ -1,3 +1,5 @@
+import random
+
 import yt_monster_py as yt_monster
 import requests
 import time
@@ -13,19 +15,11 @@ mes = None
 values = {}
 task_tg = None
 tokens = ['', '', '']
-Versoin = '3.4.1'
-Change_log = '\n1. Добавлено закрытие клиентов' \
-             '\n2. Переделаны кнопки' \
-             '\n3. Исправлены некоторые синтаксические ошибки' \
-             '\n4. Добавлена команда: /restart (перезагружает код соответственно все переменные очищяются)' \
-             '\n5. Исправил пинг (теперь пингуются реальные сервера из списка в самом коде)' \
-             '\n6. Изменена информация о пинге' \
-             '\n7. Добавили смену токена телеграм бота во время работы (очень удобно если бот стоит на сервер)' \
-             '\n8. Добавили ответ если вы написали что то боту а он не знает что это' \
-             '\n9. Убрал спам (бот теперь просто редактирует сообщение)' \
-             '\n10. Теперь можно открепить закрепленное сообщение с помощью команды /unpin'
-
-
+Versoin = '3.5'
+Change_log = '\n1. Наконец сделал защиту от сторонних юзеров (по айди)' \
+             '\n2. Баг фиксы'
+id_tg = ''
+text_tg_bot = None
 
 print("Для получения токена Yt_monster используйте: https://ytmonster.ru/api/#key или https://clifl.com/api/#key "
       "\nДля получения токена Telegram бота используйте: https://t.me/BotFather\nTelegram канал разработчика: https://t.me/GODIMONGO"
@@ -117,9 +111,26 @@ def button_start():
 
     return keyboard
 
+try:
 
+    with open('config.txt', 'r') as f:
+        id_tg = f.read().replace(' ', '')
+        if id_tg == '':
+            text_tg_bot = str(random.randint(1000, 9999))
+            print('\n\n\nКажется, мы не знаем ваш ID в Telegram! '
+                  '\nВам требуется ввести 4-значный код (без пробелов и других символов) '
+                  '\nдля телеграм-бота после его запуска: ' + text_tg_bot + '. \nВведите любое значение и нажмите Enter для продолжения!')
+            input('')
+        else:
+            id_tg = int(id_tg)
+except FileNotFoundError:
+    text_tg_bot = str(random.randint(1000, 9999))
+    print('\n\n\nКажется, мы не знаем ваш ID в Telegram! '
+          '\nВам требуется ввести 4-значный код (без пробелов и других символов) '
+          '\nдля телеграм-бота после его запуска: ' + text_tg_bot + '. \nВведите любое значение и нажмите Enter для продолжения!')
+    input('')
 bot = telebot.TeleBot(str(tokens[0]))
-print('\n'* 100)
+print('\n' * 100)
 print('Бот запущен!')
 yt_monster.log('Бот запущен!')
 
@@ -391,6 +402,7 @@ def callback_worker(call):
 
     elif call.data == 'create_task':
         chat_id = call.from_user.id
+        err = ''
         if task_tg == 'like_tg':
             req, err = yt_monster.yt_monster_create_task_tg(values[chat_id][0], values[chat_id][1],
                                                      token_ytmonster,
@@ -412,13 +424,18 @@ def callback_worker(call):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_message(message):
-    global tokens,  values, mes, task_tg
+    global tokens,  values, mes, task_tg, text_tg_bot, id_tg
     keyboard_back = types.InlineKeyboardMarkup()
     back = types.InlineKeyboardButton(text='Назад', callback_data='back')
     keyboard_back.add(back)
     # Проверяем, верный ли токен
 
     if task_tg == 'change_token_telegram':
+        if str(id_tg) != str(message.from_user.id):
+            bot.send_message(message.from_user.id, text="Ошибка: вы не являетесь владельцем этого бота!"
+                                                        "\n Если вы хотите сбросить айди владельца просто удалите фаел config.txt", reply_markup=keyboard_back)
+            return
+
         try:
             bot_new = telebot.TeleBot(message.text)
             bot_new.get_me()
@@ -476,11 +493,23 @@ def handle_message(message):
                     return
                 task = types.InlineKeyboardButton(text='Да', callback_data='create_task', reply_markup=keyboard)
                 keyboard.add(task)
-                result = '\nТип: ' + values[chat_id][0] + '\nСсылка: ' + values[chat_id][1] + '\nРеакции: ' + str(
-                    values[chat_id][2]) + '\nКоличество выполнений на задание: ' + values[chat_id][
-                             3] + '\nКоличество выполнений в час: ' + values[chat_id][
-                             4] + '\nЦена за 1 выполнение задания: ' + values[chat_id][5] + '\nВсе верно?'
+                req, err = yt_monster.ytmonster_req(token_ytmonster, 'balance')
+                if err != 'ok':
+                    result = '\nТип: ' + values[chat_id][0] + '\nСсылка: ' + values[chat_id][1] + '\nРеакции: ' + str(
+                        values[chat_id][2]) + '\nКоличество выполнений на задание: ' + values[chat_id][3] + \
+                            '\nКоличество выполнений в час: ' + values[chat_id][4] + \
+                            '\nЦена за 1 выполнение задания: ' + values[chat_id][5] + \
+                            '\nВсе верно?'
+                else:
+                    result = '\nТип: ' + values[chat_id][0] + '\nСсылка: ' + values[chat_id][1] + '\nРеакции: ' + str(
+                        values[chat_id][2]) + '\nКоличество выполнений на задание: ' + values[chat_id][3] + \
+                             '\nКоличество выполнений в час: ' + values[chat_id][4] + \
+                             '\nЦена за 1 выполнение задания: ' + values[chat_id][5] + \
+                             '\nВаш баланс:' + str(req) + \
+                             '\nБудет затрачено: ' + str(int(values[chat_id][5]) * int(values[chat_id][3])) + \
+                             '\nВсе верно?'
                 task_tg = ''
+                del req
                 bot.send_message(chat_id, result, reply_markup=keyboard)
 
         elif mes == 'view_tg':
@@ -500,15 +529,33 @@ def handle_message(message):
                 values[chat_id].append(message.text)
                 task = types.InlineKeyboardButton(text='Да', callback_data='create_task')
                 keyboard.add(task)
-                result = '\nТип: ' + values[chat_id][0] + '\nСсылка: ' + values[chat_id][
-                    1] + '\nКоличество выполнений на задание: ' + values[chat_id][
-                             2] + '\nКоличетсво выполнений в час: ' + values[chat_id][
-                             3] + '\nЦена за 1 выполнение задание: 100 COIN (фиксированно)' + '\nВсе верно?'
+                req, err = yt_monster.ytmonster_req(token_ytmonster, 'balance')
+                if err != 'ok':
+                    result = '\nТип: ' + values[chat_id][0] + '\nСсылка: ' + values[chat_id][
+                        1] + '\nКоличество выполнений на задание: ' + values[chat_id][
+                                 2] + '\nКоличетсво выполнений в час: ' + values[chat_id][
+                                 3] + '\nЦена за 1 выполнение задание: 100 COIN (фиксированно)' + '\nВсе верно?'
+                else:
+                    result = '\nТип: ' + values[chat_id][0] + '\nСсылка: ' + values[chat_id][
+                        1] + '\nКоличество выполнений на задание: ' + values[chat_id][
+                                 2] + '\nКоличетсво выполнений в час: ' + values[chat_id][
+                                 3] + '\nЦена за 1 выполнение задание: 100 COIN (фиксированно)' + \
+                                 '\nВаш баланс:' + str(req) + 'Будет затрачено: ' + str(int(values[chat_id][2]) * 100) \
+                             + '\nВсе верно?'
                 task_tg = 'view_tg'
+                del req
                 bot.send_message(chat_id, result, reply_markup=keyboard)
 
         else:
             bot.send_message(chat_id,'Такого типа на данный момент не существует!\nВведите тип задания! Доступные типы:  like', reply_markup=keyboard)
+            mes = None
+    elif text_tg_bot == message.text:
+
+        bot.send_message(message.from_user.id,
+                         'Ваш айди: ' + str(message.from_user.id) + ' Был успешно сохранен!', reply_markup=keyboard_back)
+        with open('config.txt', 'w') as f:
+            f.write(str(message.from_user.id))
+
     else:
         keyboard = types.InlineKeyboardMarkup()
         back = types.InlineKeyboardButton(text='Гл. меню', callback_data='back')
