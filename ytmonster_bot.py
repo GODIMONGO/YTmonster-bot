@@ -1,5 +1,4 @@
 import random
-
 import yt_monster_py as yt_monster
 import requests
 import time
@@ -11,13 +10,13 @@ from datetime import datetime
 import statistics
 import ping3
 import speedtest
+import threading
 mes = None
 values = {}
 task_tg = None
 tokens = ['', '', '']
-Versoin = '3.5'
-Change_log = '\n1. Наконец сделал защиту от сторонних юзеров (по айди)' \
-             '\n2. Баг фиксы'
+Versoin = '3.6'
+Change_log = '\n1. Статистика по балансу за 10 дней так же баланс сохраняется в фаел в скором времени будут дополнения! К этой функции.'
 id_tg = ''
 text_tg_bot = None
 
@@ -28,6 +27,30 @@ time.sleep(2)
 yt_monster.log('Старт бота')
 
 
+def balase_task(token):
+    token_work = token[0]
+    token_task = token[1]
+    import json
+    while True:
+        try:
+            # Отправляем запрос на получение баланса
+            req = requests.get('https://app.ytmonster.ru/api/?balance=get&token=' + token_work)
+            json1 = json.loads(req.text)
+
+            # Обработка ошибок и запись баланса в файл
+            a, err = yt_monster.ytmonster_error(json1["error"])
+            if err == 'ok':
+                with open('balance.txt', 'a') as f:
+                    f.write(f'{json1["response"]["balance"]}\n')
+            else:
+                time.sleep(10)
+                yt_monster.log('Возникла ошибка в цикле! Получения баланса')
+
+            # Ждем 24 часа
+            time.sleep(24*60*60)
+        except requests.exceptions.RequestException:
+            time.sleep(10)
+            yt_monster.log('Возникла ошибка в цикле! Получения баланса')
 
 
 try:
@@ -75,8 +98,15 @@ while True:
     with open('token.txt', 'w') as f:
         f.write('\n'.join(tokens))
 
+
+
 yt_monster.log('Все токены проверены и верны')
 token_ytmonster = [tokens[1], tokens[2]]
+
+
+
+thread = threading.Thread(target=balase_task, args=(token_ytmonster,))
+thread.start()
 
 
 def button_start():
@@ -107,8 +137,8 @@ def button_start():
     keyboard.row(add_task, change_token)
 
     clear_log = types.InlineKeyboardButton(text='🗑 Очистить лог', callback_data='clear_log')
-    keyboard.row(clear_log)
-
+    add_id = types.InlineKeyboardButton(text='Ввести код подтверждения.', callback_data='ID_Telegram')
+    keyboard.row(clear_log,  add_id)
     return keyboard
 
 try:
@@ -129,11 +159,14 @@ except FileNotFoundError:
           '\nВам требуется ввести 4-значный код (без пробелов и других символов) '
           '\nдля телеграм-бота после его запуска: ' + text_tg_bot + '. \nВведите любое значение и нажмите Enter для продолжения!')
     input('')
+
+
 bot = telebot.TeleBot(str(tokens[0]))
 print('\n' * 100)
+if id_tg != '':
+    bot.send_message(id_tg, 'Бот запущен! Вы можете ввести команду для получения главного меню: /start')
 print('Бот запущен!')
 yt_monster.log('Бот запущен!')
-
 
 
 @bot.message_handler(commands=["help"])
@@ -193,14 +226,37 @@ def callback_worker(call):
         print('Сообщение отправлено!')
 
     elif call.data == "balance":
-        req, err = yt_monster.ytmonster_req(token_ytmonster, 'balance')
-        if err != 'ok':
-            bot.send_message(call.from_user.id, text='Произошла ошибка:' + err, reply_markup=keyboard_back)
-            yt_monster.log('Произошла ошибка:' + err)
-            print('Сообщение отправлено!')
-        bot.send_message(call.from_user.id, text='Баланс: ' + str(req) + ' COIN', reply_markup=keyboard_back)
-        bot.answer_callback_query(call.id)
-        print('Сообщение отправлено!')
+        with open('balance.txt', 'r') as f:
+            balance = f.readlines()
+        if len(balance) == 0:
+            bot.send_message(call.from_user.id, text='Статистика баланса не готова.', reply_markup=keyboard_back)
+            yt_monster.log('Статистика баланса не готова.')
+        else:
+            last_ten_days = balance[-10:]
+            stats = ''
+            for i in range(len(last_ten_days)):
+                stats += f'{i + 1} день: {last_ten_days[i]}'
+
+            start_balance = float(last_ten_days[0].strip())
+            end_balance = float(last_ten_days[-1].strip())
+            balance_change = end_balance - start_balance
+            balance_percent = (balance_change / start_balance) * 100
+
+            req, err = yt_monster.ytmonster_req(token_ytmonster, 'balance')
+            if err != 'ok':
+                bot.send_message(call.from_user.id, text='Произошла ошибка:' + err, reply_markup=keyboard_back)
+                yt_monster.log('Произошла ошибка:' + err)
+                print('Сообщение отправлено!')
+            else:
+                bot.send_message(call.from_user.id, text=f'💰 Баланс на данный момент: {req} COIN\n\n'
+                                                         f'📊 Статистика баланса за последние {len(last_ten_days)} дней:\n\n'
+                                                         f'{stats}\n\n'
+                                                         f'📈 Изменение баланса за последние {len(last_ten_days)} дней: {balance_change:.2f} COIN ({balance_percent:.2f}%)\n',
+                                 reply_markup=keyboard_back)
+                bot.answer_callback_query(call.id)
+                print('Сообщение отправлено!')
+
+
 
     elif call.data == "version":
         bot.send_message(call.from_user.id, text=str('Версия бота: ' + str(Versoin) + '\nTelegram канал разработчика: https://t.me/GODIMONGO' + '\n' + Change_log), reply_markup=keyboard_back)
@@ -382,14 +438,19 @@ def callback_worker(call):
             bot.edit_message_text("Не один сервер не дал ответа!", chat_id, message_id, reply_markup=keyboard_back)
 
     elif call.data == 'add_task':
-        task_tg = 'add_task'
-        bot.send_message(call.from_user.id, text='Введите тип задания!(Учитывая регистр) '
-                                                 'Доступные типы:'
-                                                 '\nСоздание заданий на реакции в телеграм:'
-                                                 '\nlike_tg'
-                                                 '\nПросмотры в телеграм:'
-                                                 '\nview_tg', reply_markup=keyboard_back)
-        bot.answer_callback_query(call.id)
+        if id_tg == call.data:
+            task_tg = 'add_task'
+            bot.send_message(call.from_user.id, text="Ошибка: вы не являетесь владельцем этого бота!"
+                                                        "\n Если вы хотите сбросить айди владельца просто удалите фаел config.txt")
+            bot.send_message(call.from_user.id, text='Введите тип задания!(Учитывая регистр) '
+                                                     'Доступные типы:'
+                                                     '\nСоздание заданий на реакции в телеграм:'
+                                                     '\nlike_tg'
+                                                     '\nПросмотры в телеграм:'
+                                                     '\nview_tg', reply_markup=keyboard_back)
+            bot.answer_callback_query(call.id)
+        else:
+            bot.send_message(call.from_user.id, text= '')
 
     elif call.data == 'change_token_telegram':
         global old_tokens
@@ -399,6 +460,17 @@ def callback_worker(call):
         # Сообщаем пользователю, что нужно ввести новый токен
         bot.send_message(call.from_user.id, text='Введите новый токен:', reply_markup=keyboard_back)
         bot.answer_callback_query(call.id)
+
+    elif call.data == 'ID_Telegram':
+        bot.send_message(call.from_user.id, text='Введите код:')
+        task_tg = 'id'
+
+    elif call.data == 'work_task':
+        keyboard = types.InlineKeyboardMarkup()
+        add_accaunt = types.InlineKeyboardButton(text='Добавить аккаунт', callback_data='add_accaunt')
+        del_accaunt = types.InlineKeyboardButton(text='Удалить аккаунт', callback_data='del_accaunt')
+        keyboard.row(add_accaunt, del_accaunt)
+        bot.send_message(call.from_user.id, text='Выберите что вы хотите сделать:', reply_markup=keyboard)
 
     elif call.data == 'create_task':
         chat_id = call.from_user.id
@@ -431,7 +503,7 @@ def handle_message(message):
     # Проверяем, верный ли токен
 
     if task_tg == 'change_token_telegram':
-        if str(id_tg) != str(message.from_user.id):
+        if int(id_tg) != int(message.from_user.id):
             bot.send_message(message.from_user.id, text="Ошибка: вы не являетесь владельцем этого бота!"
                                                         "\n Если вы хотите сбросить айди владельца просто удалите фаел config.txt", reply_markup=keyboard_back)
             return
@@ -549,12 +621,17 @@ def handle_message(message):
         else:
             bot.send_message(chat_id,'Такого типа на данный момент не существует!\nВведите тип задания! Доступные типы:  like', reply_markup=keyboard)
             mes = None
-    elif text_tg_bot == message.text:
+    elif task_tg == 'id':
+        if text_tg_bot == message.text:
 
-        bot.send_message(message.from_user.id,
-                         'Ваш айди: ' + str(message.from_user.id) + ' Был успешно сохранен!', reply_markup=keyboard_back)
-        with open('config.txt', 'w') as f:
-            f.write(str(message.from_user.id))
+            bot.send_message(message.from_user.id,
+                             'Ваш айди: ' + str(message.from_user.id) + ' Был успешно сохранен!', reply_markup=keyboard_back)
+            with open('config.txt', 'w') as f:
+                f.write(str(message.from_user.id))
+                id_tg = message.from_user.id
+        else:
+            bot.send_message(message.from_user.id, 'Похоже вы ошиблись в коде! Поробуйте заново.')
+            task_tg = ''
 
     else:
         keyboard = types.InlineKeyboardMarkup()
