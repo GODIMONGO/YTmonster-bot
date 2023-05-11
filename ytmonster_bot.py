@@ -87,9 +87,8 @@ while True:
         values = {}
         task_tg = None
         tokens = ['', '', '']
-        Versoin = '3.9'
-        Change_log = '\n1. Исправлены ошибки.' \
-                     '\n2. Обновление 3.9 добавлена поддержка программы запуска 1.1'
+        Versoin = '3.9.1'
+        Change_log = '\n1. Исправлены ошибки.'
         id_tg = ''
         text_tg_bot = None
 
@@ -253,13 +252,13 @@ while True:
             return keyboard
 
 
+        text_tg_bot = str(random.randint(1000, 9999))
         try:
             id_tg, error = read_file('config.txt', 1, 'read')
             if error:
                 raise FileNotFoundError(f'config.txt is missing or empty')
             id_tg = id_tg.replace(' ', '')
             if id_tg == '':
-                text_tg_bot = str(random.randint(1000, 9999))
                 print('\n\n\nКажется, мы не знаем ваш ID в Telegram! '
                       '\nВам требуется ввести 4-значный код (без пробелов и других символов) '
                       f'\nдля телеграм-бота после его запуска: {text_tg_bot}. '
@@ -268,7 +267,6 @@ while True:
             else:
                 id_tg = int(id_tg)
         except (FileNotFoundError, ValueError):
-            text_tg_bot = str(random.randint(1000, 9999))
             print('\n\n\nКажется, мы не знаем ваш ID в Telegram! '
                   '\nВам требуется ввести 4-значный код (без пробелов и других символов) '
                   f'\nдля телеграм-бота после его запуска: {text_tg_bot}. '
