@@ -1,4 +1,4 @@
-[![Telegram](https://img.shields.io/badge/Telegram-Channel-blue)](https://t.me/GODIMONGO)
+[![Телеграм](https://img.shields.io/badge/Telegram-Channel-blue)](https://t.me/GODIMONGO)
 
 
 # YTmonster-bot
