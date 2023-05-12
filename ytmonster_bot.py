@@ -87,7 +87,7 @@ while True:
         values = {}
         task_tg = None
         tokens = ['', '', '']
-        Versoin = '3.9.1'
+        Versoin = '3.9.2'
         Change_log = '\n1. Исправлены ошибки.'
         id_tg = ''
         text_tg_bot = None
@@ -325,7 +325,7 @@ while True:
 
         @bot.callback_query_handler(func=lambda call: True)  # ответ на кнопки
         def callback_worker(call):
-            global token_ytmonster, task_tg, mes, values
+            global token_ytmonster, task_tg, mes, values, id_tg
             keyboard_back = types.InlineKeyboardMarkup()
             back = types.InlineKeyboardButton(text='Назад', callback_data='back')
             keyboard_back.add(back)
@@ -561,10 +561,8 @@ while True:
                     bot.edit_message_text("Не один сервер не дал ответа!", chat_id, message_id, reply_markup=keyboard_back)
 
             elif call.data == 'add_task':
-                if id_tg == call.data:
+                if id_tg == call.from_user.id:
                     task_tg = 'add_task'
-                    bot.send_message(call.from_user.id, text="Ошибка: вы не являетесь владельцем этого бота!"
-                                                             "\n Если вы хотите сбросить айди владельца просто удалите фаел config.txt")
                     bot.send_message(call.from_user.id, text='Введите тип задания!(Учитывая регистр) '
                                                              'Доступные типы:'
                                                              '\nСоздание заданий на реакции в телеграм:'
@@ -572,8 +570,11 @@ while True:
                                                              '\nПросмотры в телеграм:'
                                                              '\nview_tg', reply_markup=keyboard_back)
                     bot.answer_callback_query(call.id)
+                elif id_tg != call.from_user.id:
+                    bot.send_message(call.from_user.id, text="Ошибка: вы не являетесь владельцем этого бота!"
+                                                             "\n Если вы хотите сбросить айди владельца просто удалите фаел config.txt")
                 else:
-                    bot.send_message(call.from_user.id, text='')
+                    bot.send_message(call.from_user.id, text='Похоже мы не знаем ваш айди.')
 
             elif call.data == 'change_token_ytmonster':
                 task_tg = 'change_token_ytmonster'
