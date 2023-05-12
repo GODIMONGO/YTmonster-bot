@@ -1,3 +1,6 @@
+[![Telegram](https://img.shields.io/badge/Telegram-Channel-blue)](https://t.me/GODIMONGO)
+
+
 # YTmonster-bot
 Бот для сайта Ytmonster
 https://ytmonster.ru/
