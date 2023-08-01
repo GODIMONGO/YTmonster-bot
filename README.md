@@ -1,3 +1,7 @@
+# По всем вопросам писать мне: https://t.me/GODIMONGO всем кому надо помогу
+
+
+
 [![Телеграм](https://img.shields.io/badge/Telegram-Channel-blue)](https://t.me/GODIMONGO)
 
 
