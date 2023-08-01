@@ -2,10 +2,16 @@ import time
 import yt_monster_py
 import requests
 import bot
-import telebot
 import threading
+from art import tprint
+from colorama import init
+init()
+from colorama import Fore, Back, Style
+import tqdm
+import time
 
-version_bot = ('4.0.0 BETA')
+
+version_bot = ('4.0.1 BETA')
 print('Версия бота:' + version_bot)
 print('🔰Данный бот поддерживает версию API 2.0 Пожалуйста учитывайте это поскольку токены между собой не совместимы!\n'
       'Бот протестирован для версии библиотеки yt_monster_py: 2.9🔰\n------')
@@ -74,4 +80,31 @@ print('Все токены успешно проверены!')
 bot = threading.Thread(target=bot.start, args=(tokens[0],))
 bot.start()
 time.sleep(5)
-print('')
+print('Это меню находится в BETA тестировании! Но тут уже есть пару фишек')
+print(Fore.GREEN + 'Запуск меню...')
+for _ in tqdm.tqdm(range(100)):
+    time.sleep(0.1)
+import yt_monster_py
+print('\n'*100)
+print(Fore.WHITE)
+tprint("YTMONSTER-CLIENT")
+print(Style.BRIGHT + '---------------------------------------------МЕНЮ---------------------------------------------\n' + Style.RESET_ALL)
+
+while True:
+    print('1. Версия')
+    print('2. Баланс')
+    print('3. Информация')
+    print('Введите номер пункта меню:')
+    a = input('')
+    if a == '1':
+        print('Версия бота:' + version_bot + ' Версия меню: 1.0 BETA')
+        time.sleep(3)
+    elif a == '2':
+        req, err = yt_monster_py.balance_coin(tokens[1])
+        print('Ваш баланс:' + str(req))
+        time.sleep(3)
+    elif a == '3':
+        print('Просто меню если вы хотите использовать одновременно бота и меню!')
+        time.sleep(3)
+    else:
+        print('Я не понял число!')
