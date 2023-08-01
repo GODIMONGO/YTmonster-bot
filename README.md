@@ -1,3 +1,4 @@
+#APIv1 БОЛЕЕ НЕ ПОДДЕРЖИВАЕТСЯ
 # По всем вопросам писать мне: https://t.me/qsa95 всем кому надо помогу
 [![Телеграм](https://img.shields.io/badge/Telegram-Channel-blue)](https://t.me/GODIMONGO)
 
