@@ -7,8 +7,6 @@ from art import tprint
 from colorama import init
 init()
 from colorama import Fore, Back, Style
-import tqdm
-print('1')
 import time
 
 
