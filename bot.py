@@ -42,15 +42,12 @@ def start(token):
             print(text_tg_bot)
         else:
             chat_id = message.chat.id
-            message_text = 'Пока тут пусто'
-            # проверяем, есть ли уже закрепленное сообщение с таким текстом
+            message_text = ('Внимание! Данная врсия бота находится в стадии BETA теста')
             pinned_message = bot.get_chat(chat_id).pinned_message
             if pinned_message is None or pinned_message.text != message_text:
-                # если нет, то отправляем и закрепляем сообщение
                 sent_message = bot.send_message(chat_id, message_text)
                 bot.pin_chat_message(chat_id, sent_message.message_id)
-
-            time.sleep(0.1)
+            time.sleep(0.0001)
             bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEINtRkGK9SK6pHQrYy1aKnW-6ZcmlEjQAC8zAAAiP1yEgwajIpJJRmtS8E')
             keyboard_reply = types.ReplyKeyboardMarkup(resize_keyboard=True)
             button1 = types.KeyboardButton("/restart (для перезагрузки бота)")
@@ -67,7 +64,8 @@ def start(token):
         if state == 'tg_id':
             if str(message.text) == str(text_tg_bot):
                 bot.send_message(message.chat.id, 'ID успешно подтвержден! Нажмите еще раз /start')
-                work.file_action("Дополнить", "config.txt", line_number=1, content_to_append=str(message.chat.id))
+                work.file_action("Дополнить", "config.txt", line_number=1,
+                                 content_to_append=str(message.chat.id))
             else:
                 bot.send_message(message.chat.id, 'Неверный код подтверждения! Код продублирован в консоль')
                 print(text_tg_bot)
