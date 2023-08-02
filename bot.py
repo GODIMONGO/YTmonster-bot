@@ -12,6 +12,7 @@ def start(token):
     try:
         id_tg = work.read_file('config.txt', 1)
         id_tg = id_tg.replace(' ', '')
+        print()
         if id_tg == '' or id_tg == 'NO':
             print('\n\n\nКажется, мы не знаем ваш ID в Telegram! '
                   '\nВам требуется ввести 4-значный код (без пробелов и других символов) '
@@ -29,8 +30,7 @@ def start(token):
 
 
     bot = telebot.TeleBot(token)
-    id_tg = id_tg.replace(' ', '')
-    if id_tg == '' or id_tg == 'NO':
+    if id_tg != '' and id_tg != 'NO':
         bot.send_message(id_tg, 'Бот запущен! Вы можете ввести команду для получения главного меню: /start')
     print('Бот запущен!')
 
