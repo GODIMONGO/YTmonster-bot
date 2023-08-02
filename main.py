@@ -10,6 +10,8 @@ from colorama import Fore, Back, Style
 import time
 import tqdm
 import work
+import os
+import sys
 
 
 
@@ -35,7 +37,7 @@ except (FileNotFoundError, ValueError, IndexError):
         work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(2))
 
 
-version_bot = ('4.0.3 BETA')
+version_bot = ('4.0.4 BETA')
 print('Версия бота: ' + version_bot)
 print('🔰Данный бот поддерживает версию API 2.0 Пожалуйста учитывайте это поскольку токены между собой не совместимы!\n'
       'Бот протестирован для версии библиотеки yt_monster_py: 2.9🔰\n------')
@@ -108,7 +110,7 @@ if menu == '1':
     print('Это меню находится в BETA тестировании! Но тут уже есть пару фишек')
     print(Fore.GREEN + 'Запуск меню...')
     for _ in tqdm.tqdm(range(100)):
-        time.sleep(0.1)
+        time.sleep(0.01)
     import yt_monster_py
     print('\n'*100)
     print(Fore.WHITE)
@@ -119,7 +121,7 @@ if menu == '1':
     while True:
         print('1. Версия')
         print('2. Баланс')
-        print('3. Информация')
+        print('3. Настройки')
         print('Введите номер пункта меню:')
         a = input('')
         if a == '1':
@@ -130,7 +132,24 @@ if menu == '1':
             print('Ваш баланс:' + str(req))
             time.sleep(3)
         elif a == '3':
-            print('Просто меню если вы хотите использовать одновременно бота и меню!')
-            time.sleep(3)
+            while True:
+                print('=====НАСТРОЙКИ=====')
+                print('1. Отключить меню')
+                print('2. Повторить подтверждение по ID в телеграм')
+                print('3. Выход')
+                print('===================')
+                print('Введите номер пункта меню:')
+                a = input('')
+                if a == '1':
+                    work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(1))
+                elif a == '2':
+                    work.file_action("Дополнить", "config.txt", line_number=1, content_to_append='NO')
+                    print('Перезагрузка....')
+                    os.execl(sys.executable, sys.executable, *sys.argv)
+                elif a == '3':
+                    break
+                else:
+                    print('Я не понял число!')
+
         else:
             print('Я не понял число!')
