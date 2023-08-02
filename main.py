@@ -8,10 +8,11 @@ from colorama import init
 init()
 from colorama import Fore, Back, Style
 import time
+import tqdm
 
 
-version_bot = ('4.0.1 BETA')
-print('Версия бота:' + version_bot)
+version_bot = ('4.0.2 BETA')
+print('Версия бота: ' + version_bot)
 print('🔰Данный бот поддерживает версию API 2.0 Пожалуйста учитывайте это поскольку токены между собой не совместимы!\n'
       'Бот протестирован для версии библиотеки yt_monster_py: 2.9🔰\n------')
 time.sleep(5)
