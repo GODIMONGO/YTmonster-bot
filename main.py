@@ -14,7 +14,11 @@ import os
 import sys
 
 
-
+tprint("YTMONSTER-BOT")
+print(Fore.GREEN + 'Запуск бота...')
+for _ in tqdm.tqdm(range(100)):
+    time.sleep(0.05)
+print('' + Style.RESET_ALL)
 
 try:
     menu = work.read_file('config.txt', 2)
@@ -28,7 +32,7 @@ try:
             work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(2))
 except (FileNotFoundError, ValueError, IndexError):
 
-    if input('Хотели бы вы использовать меню в консоли?\n 1. Да \n 2. Нет') == '1':
+    if input('Хотели бы вы использовать меню в консоли?\n 1. Да \n 2. Нет\n') == '1':
         menu = '1'
         work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(1))
     else:
@@ -37,7 +41,7 @@ except (FileNotFoundError, ValueError, IndexError):
         work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(2))
 
 
-version_bot = ('4.0.4 BETA')
+version_bot = ('4.0.6 BETA')
 print('Версия бота: ' + version_bot)
 print('🔰Данный бот поддерживает версию API 2.0 Пожалуйста учитывайте это поскольку токены между собой не совместимы!\n'
       'Бот протестирован для версии библиотеки yt_monster_py: 2.9🔰\n------')
@@ -114,11 +118,11 @@ if menu == '1':
     import yt_monster_py
     print('\n'*100)
     print(Fore.WHITE)
-    tprint("YTMONSTER-CLIENT")
-    print(Style.BRIGHT + '---------------------------------------------МЕНЮ-------------------------------------'
-                         '--------\n' + Style.RESET_ALL)
 
     while True:
+        tprint("YTMONSTER-CLIENT")
+        print(Style.BRIGHT + '---------------------------------------------МЕНЮ-------------------------------------'
+                             '--------\n' + Style.RESET_ALL)
         print('1. Версия')
         print('2. Баланс')
         print('3. Настройки')
@@ -141,10 +145,15 @@ if menu == '1':
                 print('Введите номер пункта меню:')
                 a = input('')
                 if a == '1':
-                    work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(1))
-                elif a == '2':
-                    work.file_action("Дополнить", "config.txt", line_number=1, content_to_append='NO')
+                    work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(2))
                     print('Перезагрузка....')
+                    time.sleep(1)
+                    os.execl(sys.executable, sys.executable, *sys.argv)
+                elif a == '2':
+                    work.file_action("Дополнить", "config.txt", line_number=1,
+                                     content_to_append='NO')
+                    print('Перезагрузка....')
+                    time.sleep(1)
                     os.execl(sys.executable, sys.executable, *sys.argv)
                 elif a == '3':
                     break

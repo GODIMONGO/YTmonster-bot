@@ -23,11 +23,11 @@ def append_to_file(filename, line_number, content_to_append):
         if line_number <= 0:
             raise IndexError("Неверный номер строки")
 
-        # Если номер строки больше, чем количество строк + 1, то добавим пустые строки до нужной позиции
-        while line_number > len(lines) + 1:
+        # Если номер строки больше, чем количество строк, то добавим пустые строки до нужной позиции
+        while line_number > len(lines):
             lines.append("\n")
 
-        lines.insert(line_number - 1, content_to_append + "\n")
+        lines[line_number - 1] = content_to_append + "\n"
 
         with open(filename, 'w') as file:
             file.writelines(lines)
@@ -40,6 +40,7 @@ def append_to_file(filename, line_number, content_to_append):
         raise IndexError("Ошибка при обновлении строки в файле") from e
     except Exception as e:
         raise Exception("Произошла непредвиденная ошибка при обновлении файла") from e
+
 
 
 
