@@ -91,6 +91,31 @@ def start(tokens):
         elif call.data == "version":
             bot.send_message(call.from_user.id,
                              text='Версия библиотеки: ' + str(yt_monster_py.version()), reply_markup=keyboard_back)
+        elif call.data == "get_client":
+            clients = yt_monster_py.ytclients_get(tokens[1])
+            print(clients)
+            mess = '=========\n'
+            a = 0
+            while len(clients) > a:
+                client = clients[a]
+                mess += f'ID: ' + str(client['id'])
+                mess += '\nСекунд до завершения просмотра: ' + str(client['sec'])
+                mess += '\nСылка: ' + client['http']
+                mess += '\nОшибок при просмотре: ' + str(client['error'])
+                mess += '\nIP клиента: ' + client['ip']
+                if str(client['youtube_account']) == '':
+                    mess += '\nЮтуб аккаунт: вы вошли в аккаунт: Auth'
+                else:
+                    mess += '\nЮтуб аккаунт: вы вошли в аккаунт:' + str(client['youtube_account'])
+                mess += '\nЗаработано коинов за просмотр видео: ' + str(client['coin'])
+                mess += '\nПросмотрено видео: ' + str(client['count'])
+                mess += '\nВыполнено заданий: ' + str(client['count_task'])
+                mess += '\nЗаработано коинов за выполнение заданий: ' + str(client['coin_task'])
+                mess += '\n=========\n'
+                a += 1
+            bot.send_message(call.from_user.id,
+                             text=mess, reply_markup=keyboard_back)
+
         else:
             bot.send_message(call.from_user.id,
                              text='Похоже кнопка еще не доступна! ', reply_markup=keyboard_back)

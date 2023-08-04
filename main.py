@@ -12,7 +12,8 @@ import work
 import os
 import sys
 
-version_bot = ('4.1.3 BETA')
+version_bot = ('4.2.0 BETA')
+yt_monster_ver = 3.0
 
 tprint("YTMONSTER-BOT")
 print(Fore.GREEN + 'Запуск бота...')
@@ -43,12 +44,15 @@ except (FileNotFoundError, ValueError, IndexError):
 
 print('Версия бота: ' + version_bot)
 print('🔰Данный бот поддерживает версию API 2.0 Пожалуйста учитывайте это поскольку токены между собой не совместимы!\n'
-      'Бот протестирован для версии библиотеки yt_monster_py: 2.9🔰\n------')
+      'Бот протестирован для версии библиотеки yt_monster_py:' + str(yt_monster_ver) + '🔰\n------')
 time.sleep(5)
 
 
-if yt_monster_py.version() == 2.9:
+if yt_monster_py.version() == yt_monster_ver:
     print(f'Версия библиотеки: ' + str(yt_monster_py.version()) + ' поддерживается!')
+elif yt_monster_py.version() <= yt_monster_ver:
+    print(f'⚠️ Версия библиотеки: ' + str(yt_monster_py.version()) + ' НЕ ПОДДЕРЖИВАЕТСЯ! ⚠️')
+    time.sleep(4)
 else:
     print(f'⚠️ Версия библиотеки: ' + str(yt_monster_py.version()) + ' НЕ ПРОТЕСТИРОВАННА! ВОЗМОЖНЫ ОШИБКИ ⚠️')
     time.sleep(4)
