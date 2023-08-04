@@ -3,9 +3,12 @@ from telebot import types
 import work
 import random
 import time
+
+import yt_monster_py
+
 state = ''
 id_tg = ''
-def start(token):
+def start(tokens):
     global state
     state = ''
 
@@ -29,7 +32,7 @@ def start(token):
 
 
 
-    bot = telebot.TeleBot(token)
+    bot = telebot.TeleBot(tokens[0])
     if id_tg != '' and id_tg != 'NO':
         bot.send_message(id_tg, 'Бот запущен! Вы можете ввести команду для получения главного меню: /start')
     print('Бот запущен!')
@@ -61,7 +64,7 @@ def start(token):
 
     @bot.callback_query_handler(func=lambda call: True)  # ответ на кнопки
     def callback_worker(call):
-        global state, id_tg
+        global state, id_tg, t
         keyboard_back = types.InlineKeyboardMarkup()
         back = types.InlineKeyboardButton(text='Назад', callback_data='back')
         keyboard_back.add(back)
@@ -70,6 +73,31 @@ def start(token):
                              text="Telegram канал разработчика: https://t.me/GODIMONGO\nПривет! Выбери кнопку:",
                              reply_markup=work.button_start())
             bot.answer_callback_query(call.id)
+        elif call.data == "balance":
+            req, err = yt_monster_py.balance_coin(tokens[1])
+            if err !='NO':
+                bot.send_message(call.from_user.id,
+                                 text="Возникла ошибка:  " + str(err))
+            else:
+                mes = 'Баланс:\nCOIN: ' + str(req)
+                req, err = yt_monster_py.balance_many(tokens[1])
+                if err != 'NO':
+                    bot.send_message(call.from_user.id,
+                                     text="Возникла ошибка:  " + str(err))
+                else:
+                    mes = mes + '\nДенег: ' + str(req)
+                    bot.send_message(call.from_user.id,
+                                     text=str(mes), reply_markup=keyboard_back)
+        elif call.data == "version":
+            bot.send_message(call.from_user.id,
+                             text='Версия библиотеки: ' + str(yt_monster_py.version()), reply_markup=keyboard_back)
+        else:
+            bot.send_message(call.from_user.id,
+                             text='Похоже кнопка еще не доступна! ', reply_markup=keyboard_back)
+
+
+
+
 
     @bot.message_handler(func=lambda message: True)
     def handle_text(message):

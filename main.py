@@ -1,4 +1,3 @@
-import time
 import yt_monster_py
 import requests
 import bot
@@ -13,8 +12,7 @@ import work
 import os
 import sys
 
-version_bot = ('4.1.1 BETA')
-
+version_bot = ('4.1.2 BETA')
 
 tprint("YTMONSTER-BOT")
 print(Fore.GREEN + 'Запуск бота...')
@@ -120,7 +118,7 @@ print('Все токены успешно проверены!')
 
 
 
-bot = threading.Thread(target=bot.start, args=(tokens[0],))
+bot = threading.Thread(target=bot.start, args=(tokens,))
 bot.start()
 if menu == '1':
     time.sleep(5)
