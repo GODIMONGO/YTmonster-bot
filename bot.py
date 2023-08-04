@@ -4,6 +4,7 @@ import work
 import random
 import time
 state = ''
+id_tg = ''
 def start(token):
     global state
     state = ''
@@ -35,7 +36,7 @@ def start(token):
 
     @bot.message_handler(commands=["start"])
     def start(message):
-        global state
+        global state, id_tg
         if state == 'tg_id':
             bot.send_message(message.from_user.id, text="Пришлите пожалуйста код который был вам отправлен в консоль! ("
                                                         "Код продублирован в консоль еще раз)")
@@ -58,14 +59,28 @@ def start(token):
             bot.send_message(message.chat.id, "Сообщение для обновления клавиатуры", reply_markup=keyboard_reply)
             bot.send_message(message.from_user.id, text="Привет! Выбери кнопку:", reply_markup=work.button_start())
 
+    @bot.callback_query_handler(func=lambda call: True)  # ответ на кнопки
+    def callback_worker(call):
+        global state, id_tg
+        keyboard_back = types.InlineKeyboardMarkup()
+        back = types.InlineKeyboardButton(text='Назад', callback_data='back')
+        keyboard_back.add(back)
+        if call.data == "back":
+            bot.send_message(call.from_user.id,
+                             text="Telegram канал разработчика: https://t.me/GODIMONGO\nПривет! Выбери кнопку:",
+                             reply_markup=work.button_start())
+            bot.answer_callback_query(call.id)
+
     @bot.message_handler(func=lambda message: True)
     def handle_text(message):
-        global state
+        global state, id_tg
         if state == 'tg_id':
             if str(message.text) == str(text_tg_bot):
                 bot.send_message(message.chat.id, 'ID успешно подтвержден! Нажмите еще раз /start')
                 work.file_action("Дополнить", "config.txt", line_number=1,
                                  content_to_append=str(message.chat.id))
+                id_tg = str(message.chat.id)
+                state = ''
             else:
                 bot.send_message(message.chat.id, 'Неверный код подтверждения! Код продублирован в консоль')
                 print(text_tg_bot)
