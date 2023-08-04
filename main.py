@@ -13,6 +13,8 @@ import work
 import os
 import sys
 
+version_bot = ('4.1.1 BETA')
+
 
 tprint("YTMONSTER-BOT")
 print(Fore.GREEN + 'Запуск бота...')
@@ -41,7 +43,6 @@ except (FileNotFoundError, ValueError, IndexError):
         work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(2))
 
 
-version_bot = ('4.1.0 BETA')
 print('Версия бота: ' + version_bot)
 print('🔰Данный бот поддерживает версию API 2.0 Пожалуйста учитывайте это поскольку токены между собой не совместимы!\n'
       'Бот протестирован для версии библиотеки yt_monster_py: 2.9🔰\n------')
