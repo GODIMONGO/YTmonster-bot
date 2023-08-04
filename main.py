@@ -12,7 +12,7 @@ import work
 import os
 import sys
 
-version_bot = ('4.1.2 BETA')
+version_bot = ('4.1.3 BETA')
 
 tprint("YTMONSTER-BOT")
 print(Fore.GREEN + 'Запуск бота...')
