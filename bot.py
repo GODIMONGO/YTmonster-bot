@@ -62,9 +62,9 @@ def start(tokens):
             bot.send_message(message.chat.id, "Сообщение для обновления клавиатуры", reply_markup=keyboard_reply)
             bot.send_message(message.from_user.id, text="Привет! Выбери кнопку:", reply_markup=work.button_start())
 
-    @bot.callback_query_handler(func=lambda call: True)  # ответ на кнопки
+    @bot.callback_query_handler(func=lambda call: True)
     def callback_worker(call):
-        global state, id_tg, t
+        global state, id_tg
         keyboard_back = types.InlineKeyboardMarkup()
         back = types.InlineKeyboardButton(text='Назад', callback_data='back')
         keyboard_back.add(back)
