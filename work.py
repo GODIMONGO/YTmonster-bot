@@ -7,7 +7,12 @@ def read_file(filename, line_number):
             line = lines[line_number - 1].strip()
             return line
     except FileNotFoundError:
-        raise FileNotFoundError("Файл не найден")
+        with open(filename, 'w') as file:
+            lines = file.readlines()
+            if line_number <= 0 or line_number > len(lines):
+                raise IndexError("Неверный номер строки")
+            line = lines[line_number - 1].strip()
+            return line
     except IndexError as e:
         raise IndexError("Ошибка при чтении строки из файла") from e
 
