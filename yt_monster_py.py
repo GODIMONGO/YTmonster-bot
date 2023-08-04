@@ -6,8 +6,7 @@ url_clifl = "https://api.clifl.com/"
 
 
 def version():
-    a = 2.9
-    return a
+    return 3.0
 
 
 def balance_coin(token):
@@ -94,7 +93,6 @@ def get_task_list(token, platform, offset=0, limit=100):
         return 'Возникла ошибка. Пожалуйста, проверьте второе значение!', 'Нет заданий данного типа'
     else:
         task_list = response['response']
-        checked_count = len(task_list)
         processed_tasks = []
 
         for task in task_list:
@@ -226,3 +224,34 @@ def task_addition(token, platform, id, count):
         return 'Возникла ошибка. Пожалуйста, проверьте второе значение!', response.get('error')
     else:
         return str(response['status']), 'NO'
+
+def ytclients_get(token):
+    global url_clifl
+    data = {
+        "action": "ytclients-get",
+        "token": str(token)
+    }
+
+    response = requests.post(url_clifl, data=data).json()
+    if response['status'] != 'success':
+        return 'Возникла ошибка. Пожалуйста, проверьте второе значение!', response.get('error')
+    else:
+        task_list = response['response']
+        all_processed_tasks = []
+
+        for client in task_list:
+            processed_task = {
+                'id': str(client['id']),
+                'sec': int(client['info']['sec']),
+                'http': client['info']['http'],
+                'error': int(client['info']['error']),
+                'ip': client['info']['ip'],
+                'youtube_account': client['accounts']['youtube'],
+                'coin': int(client['data']['coin']),
+                'coin_task': int(client['data']['coin_task']),
+                'count': int(client['data']['count']),
+                'count_task': int(client['data']['count_task'])
+            }
+            all_processed_tasks.append(processed_task)
+
+        return all_processed_tasks
