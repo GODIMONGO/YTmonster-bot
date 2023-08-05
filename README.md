@@ -21,21 +21,12 @@ https://ytmonster.ru/
 
 В командной строке прописываем: 
 
-pip install PyTelegramBotApi
-
-pip install requests
-
-pip install speedtest-cli
-
-pip install ping3
-
 cd  и папка с файлом 
 
 python3  (фаел)
 
-Вводим всё что нужно.
+Либо посмотрите релизы и исппользуйте программу для виндовс
 
-Ура!
 # Благодарности
 Спасибо за помощь: 
 https://github.com/s2-name
