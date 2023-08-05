@@ -1,3 +1,47 @@
+import first_setup
+import work
+import time
+
+version_bot = ('4.3.0 BETA')
+yt_monster_ver = 3.0
+
+
+try:
+    first_start = work.read_file('config.txt', 3)
+    if first_start != 'NO':
+        Q = input(
+            'Хотели бы вы воспользоваться программой для предварительной установки YTMONSTER-BOT? \n1. Хочу \n2. Не хочу\n')
+        while Q != 'ok':
+            if Q == '1':
+                first_setup.setup()
+                print('Спасибо за использование программы предварительной установки YTMONSTER-BOT!')
+                time.sleep(5)
+                Q = 'ok'
+            elif Q == '2':
+                print('OK')
+                work.file_action("Дополнить", "config.txt", line_number=3, content_to_append='NO')
+                Q = 'ok'
+            else:
+                print('Я вас не понял!')
+except (FileNotFoundError, ValueError, IndexError):
+    Q = input(
+        'Хотели бы вы воспользоваться программой для предварительной установки YTMONSTER-BOT? \n1. Хочу \n2. Не хочу\n')
+    while Q != 'ok':
+        if Q == '1':
+            first_setup.setup()
+            print('Спасибо за использование программы предварительной установки YTMONSTER-BOT!')
+            time.sleep(5)
+            Q = 'ok'
+        elif Q == '2':
+            print('OK')
+            work.file_action("Дополнить", "config.txt", line_number=3, content_to_append='NO')
+            Q = 'ok'
+        else:
+            print('Я вас не понял!')
+
+
+
+
 import yt_monster_py
 import requests
 import bot
@@ -6,41 +50,16 @@ from art import tprint
 from colorama import init
 init()
 from colorama import Fore, Back, Style
-import time
 import tqdm
-import work
 import os
 import sys
 
-version_bot = ('4.2.0 BETA')
-yt_monster_ver = 3.0
+
+
+
+
 
 tprint("YTMONSTER-BOT")
-print(Fore.GREEN + 'Запуск бота...')
-for _ in tqdm.tqdm(range(100)):
-    time.sleep(0.05)
-print('' + Style.RESET_ALL)
-
-try:
-    menu = work.read_file('config.txt', 2)
-    if menu == '':
-        if input('Хотели бы вы использовать меню в консоли?\n 1. Да \n 2. Нет\n') == '1':
-            menu = '1'
-            work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(1))
-        else:
-            menu = '2'
-            print('Ок меню отключено (вы всегда можете поменять эти настройки в боте!')
-            work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(2))
-except (FileNotFoundError, ValueError, IndexError):
-
-    if input('Хотели бы вы использовать меню в консоли?\n 1. Да \n 2. Нет\n') == '1':
-        menu = '1'
-        work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(1))
-    else:
-        menu = '2'
-        print('Ок меню отключено (вы всегда можете поменять эти настройки в боте!')
-        work.file_action("Дополнить", "config.txt", line_number=2, content_to_append=str(2))
-
 
 print('Версия бота: ' + version_bot)
 print('🔰Данный бот поддерживает версию API 2.0 Пожалуйста учитывайте это поскольку токены между собой не совместимы!\n'
@@ -124,6 +143,7 @@ print('Все токены успешно проверены!')
 
 bot = threading.Thread(target=bot.start, args=(tokens,))
 bot.start()
+menu = work.read_file('config.txt', 2)
 if menu == '1':
     time.sleep(5)
     print('Это меню находится в BETA тестировании! Но тут уже есть пару фишек')

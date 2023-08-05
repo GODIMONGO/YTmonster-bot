@@ -104,9 +104,9 @@ def start(tokens):
                 mess += '\nОшибок при просмотре: ' + str(client['error'])
                 mess += '\nIP клиента: ' + client['ip']
                 if str(client['youtube_account']) == '':
-                    mess += '\nЮтуб аккаунт: вы вошли в аккаунт: Auth'
+                    mess += '\nЮтуб аккаунт: вы вошли в аккаунт'
                 else:
-                    mess += '\nЮтуб аккаунт: вы вошли в аккаунт:' + str(client['youtube_account'])
+                    mess += '\nЮтуб аккаунт: ' + str(client['youtube_account'])
                 mess += '\nЗаработано коинов за просмотр видео: ' + str(client['coin'])
                 mess += '\nПросмотрено видео: ' + str(client['count'])
                 mess += '\nВыполнено заданий: ' + str(client['count_task'])
