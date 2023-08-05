@@ -62,10 +62,12 @@ def setup():
                 if bibl == '1':
                     print('Выбрана автоматическая установка библиотек... Это займет некоторое время пожалуйста не '
                           'используйте компьютер во время установки!')
+                    work.file_action("Дополнить", "config.txt", line_number=3, content_to_append='NO')
                     subprocess.check_call(["pip", "install", "-r", 'requirements.txt'])
                     bibl = 'ok'
                 if bibl == '2':
                     print('OK установите все библиотеки из requriments.txt и запустите программу')
+                    work.file_action("Дополнить", "config.txt", line_number=3, content_to_append='NO')
                     sys.exit()
                 else:
                     print('Я вас не понял')

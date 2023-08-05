@@ -2,7 +2,7 @@ import first_setup
 import work
 import time
 
-version_bot = ('4.3.0 BETA')
+version_bot = ('4.3.1 BETA')
 yt_monster_ver = 3.0
 
 
