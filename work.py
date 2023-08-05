@@ -1,3 +1,5 @@
+import pickle
+import os
 def read_file(filename, line_number):
     try:
         with open(filename, 'r') as file:
@@ -95,3 +97,44 @@ def button_start():
     change = types.InlineKeyboardButton(text='🔄 Изменить токен ytmonster', callback_data='change_token_ytmonster')
     keyboard.row(change)
     return keyboard
+
+
+def save_list_to_file(file_path, data_list):
+    try:
+        with open(file_path, 'ab') as file:
+            pickle.dump(data_list, file)
+        print("Список успешно сохранен в файл.")
+    except Exception as e:
+        print("Ошибка при сохранении списка:", str(e))
+
+def read_lists_from_file(file_path):
+    try:
+        with open(file_path, 'rb') as file:
+            all_lists = []
+            while True:
+                try:
+                    data_list = pickle.load(file)
+                    all_lists.append(data_list)
+                except EOFError:
+                    break
+        return all_lists
+    except Exception as e:
+        print("Ошибка при чтении списка из файла:", str(e))
+        return []
+
+def delete_list_from_file(file_path, index):
+    try:
+        all_lists = read_lists_from_file(file_path)
+        if index < len(all_lists):
+            removed_list = all_lists.pop(index)
+            with open(file_path, 'wb') as file:
+                for data_list in all_lists:
+                    pickle.dump(data_list, file)
+            print("Список успешно удален из файла.")
+            return removed_list
+        else:
+            print("Индекс списка недопустим.")
+            return None
+    except Exception as e:
+        print("Ошибка при удалении списка:", str(e))
+        return None

@@ -2,8 +2,8 @@ import first_setup
 import work
 import time
 
-version_bot = ('4.3.1 BETA')
-yt_monster_ver = 3.0
+version_bot = ('4.3.2 BETA')
+yt_monster_ver = 3.1
 
 
 try:

@@ -6,7 +6,7 @@ url_clifl = "https://api.clifl.com/"
 
 
 def version():
-    return 3.0
+    return 3.1
 
 
 def balance_coin(token):
@@ -128,6 +128,7 @@ def add_task(token, platform, href, count, coin, valh=0, sec=None, comments=None
 
     if type != None:
         task["type"] = str(type)
+
     if platform == "ytview" or platform == "ytlike" or platform == "ytcomm":
         if "/shorts/" in href:
             parsed_url = urlparse(href)
@@ -148,6 +149,13 @@ def add_task(token, platform, href, count, coin, valh=0, sec=None, comments=None
             new_netloc = b'.'.join(netloc_parts)
             new_parsed_url = parsed_url._replace(netloc=new_netloc)
             href = urlunparse(new_parsed_url).decode('utf-8')
+
+    if platform == 'tiktok':
+        try:
+            response = requests.get(href, allow_redirects=True)
+            href = response.url.split('?')[0]
+        except Exception as e:
+            return 'Возникла ошибка во время обработки TikTok сылки', str(e)
 
 
     href = base64.b64encode(href.encode('utf-8'))
@@ -221,7 +229,10 @@ def task_addition(token, platform, id, count):
     response = requests.post(url_clifl, data=data).json()
 
     if response['status'] != 'success':
-        return 'Возникла ошибка. Пожалуйста, проверьте второе значение!', response.get('error')
+        if response.get('error') != None:
+            return 'Возникла ошибка. Пожалуйста, проверьте второе значение!', response.get('error')
+        else:
+            return 'Возникла ошибка. Пожалуйста, проверьте второе значение!', response.get('error_response')
     else:
         return str(response['status']), 'NO'
 
@@ -255,3 +266,35 @@ def ytclients_get(token):
             all_processed_tasks.append(processed_task)
 
         return all_processed_tasks
+
+def href_format(href, platform):
+    from urllib.parse import parse_qs, urlparse
+
+    if platform == "ytview" or platform == "ytlike" or platform == "ytcomm":
+        if "/shorts/" in href:
+            parsed_url = urlparse(href)
+            path = parsed_url.path
+            parts = path.split('/')
+            href = parts[-1]
+        else:
+            parsed_url = urlparse(href)
+            video_id = parsed_url.path.lstrip("/")
+            href = f"https://www.youtube.com/watch?v={video_id}"
+
+    if platform == "inst":
+        from urllib.parse import urlparse, urlunparse
+        parsed_url = urlparse(href.encode('utf-8'))
+        netloc_parts = parsed_url.netloc.split(b'.')
+        if len(netloc_parts) == 2 and netloc_parts[0] == b'instagram':
+            netloc_parts.insert(0, b'www')
+            new_netloc = b'.'.join(netloc_parts)
+            new_parsed_url = parsed_url._replace(netloc=new_netloc)
+            href = urlunparse(new_parsed_url).decode('utf-8')
+
+    if platform == 'tiktok':
+        try:
+            response = requests.get(href, allow_redirects=True)
+            href = response.url.split('?')[0]
+        except Exception as e:
+            return 'Возникла ошибка во время обработки TikTok сылки', str(e)
+    return href
