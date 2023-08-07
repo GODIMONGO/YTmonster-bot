@@ -6,7 +6,7 @@ url_clifl = "https://api.clifl.com/"
 
 
 def version():
-    return 3.1
+    return 3.2
 
 
 def balance_coin(token):
@@ -118,7 +118,7 @@ def get_task_list(token, platform, offset=0, limit=100):
 
 def add_task(token, platform, href, count, coin, valh=0, sec=None, comments=None, sec_max=None, params=None, type=None):
     global url_clifl
-    from urllib.parse import parse_qs, urlparse
+    from urllib.parse import parse_qs, urlparse, urlsplit, urlunsplit
     task = {"action": "mytasks-add", "token": str(token), "platform": str(platform), "count": str(count), "valh": str(valh)}
     if platform == 'tg' and type == 'view':
         task["coin"] = str(100)
@@ -134,11 +134,17 @@ def add_task(token, platform, href, count, coin, valh=0, sec=None, comments=None
             parsed_url = urlparse(href)
             path = parsed_url.path
             parts = path.split('/')
-            href = parts[-1]
-        else:
-            parsed_url = urlparse(href)
-            video_id = parsed_url.path.lstrip("/")
+            video_id = parts[-1]
             href = f"https://www.youtube.com/watch?v={video_id}"
+        else:
+            response = requests.head(href, allow_redirects=True)
+            if str(response) != '200':
+                return 'Возникла ошибка во время обработки youtube сылки посмотрите второе значение', str(response)
+
+        # Удаление параметров запроса
+        href = href.split('&')[0]
+
+        print(href)
 
     if platform == "inst":
         from urllib.parse import urlparse, urlunparse
@@ -268,18 +274,26 @@ def ytclients_get(token):
         return all_processed_tasks
 
 def href_format(href, platform):
-    from urllib.parse import parse_qs, urlparse
+    import requests
+    from urllib.parse import urlparse, urlunsplit
 
     if platform == "ytview" or platform == "ytlike" or platform == "ytcomm":
         if "/shorts/" in href:
             parsed_url = urlparse(href)
             path = parsed_url.path
             parts = path.split('/')
-            href = parts[-1]
-        else:
-            parsed_url = urlparse(href)
-            video_id = parsed_url.path.lstrip("/")
+            video_id = parts[-1]
             href = f"https://www.youtube.com/watch?v={video_id}"
+        else:
+            response = requests.head(href, allow_redirects=True)
+            if str(response) != '200':
+                return 'Возникла ошибка во время обработки youtube сылки посмотрите второе значение', str(response)
+
+        # Удаление параметров запроса
+        href = href.split('&')[0]
+
+        print(href)
+
 
     if platform == "inst":
         from urllib.parse import urlparse, urlunparse
