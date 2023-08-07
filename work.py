@@ -138,3 +138,17 @@ def delete_list_from_file(file_path, index):
     except Exception as e:
         print("Ошибка при удалении списка:", str(e))
         return None
+
+def update_list_in_file(file_path, index, updated_list):
+    try:
+        all_lists = read_lists_from_file(file_path)
+        if index < len(all_lists):
+            all_lists[index] = updated_list
+            with open(file_path, 'wb') as file:
+                for data_list in all_lists:
+                    pickle.dump(data_list, file)
+            print("Список успешно обновлен в файле.")
+        else:
+            print("Индекс списка недопустим.")
+    except Exception as e:
+        print("Ошибка при обновлении списка:", str(e))

@@ -2,8 +2,8 @@ import first_setup
 import work
 import time
 
-version_bot = ('4.3.2 BETA')
-yt_monster_ver = 3.1
+version_bot = ('4.4.0 BETA')
+yt_monster_ver = 3.2
 
 
 try:
@@ -53,9 +53,16 @@ from colorama import Fore, Back, Style
 import tqdm
 import os
 import sys
+import tasker
 
 
-
+try:
+    auto_add_task = work.read_file('config.txt', 4)
+    if auto_add_task == 'on':
+        auto = threading.Thread(target=tasker.auto_add,)
+        auto.start()
+except IndexError:
+    print('')
 
 
 
@@ -77,6 +84,7 @@ else:
     time.sleep(4)
 
 TOKEN_NAMES = ['telegram бота', 'Ytmonster (для выполнения заданий)', 'Ytmonster (для добавления заданий)']
+
 
 # Открыть файл и считывать список из 3 токенов
 try:
@@ -161,11 +169,12 @@ if menu == '1':
         print('1. Версия')
         print('2. Баланс')
         print('3. Настройки')
+        print('4. Авто добавление заданий')
         print('==============')
         print('Введите номер пункта меню:')
         a = input('')
         if a == '1':
-            print('Версия бота:' + version_bot + ' Версия меню: 1.0 BETA')
+            print('Версия бота:' + version_bot + ' Версия меню: 1.2 BETA')
             time.sleep(3)
         elif a == '2':
             req, err = yt_monster_py.balance_coin(tokens[1])
@@ -177,6 +186,7 @@ if menu == '1':
                 print('1. Отключить меню')
                 print('2. Повторить подтверждение по ID в телеграм')
                 print('3. Выход')
+                print('4. Настройки авто добавления заданий')
                 print('===================')
                 print('Введите номер пункта меню:')
                 a = input('')
@@ -193,8 +203,101 @@ if menu == '1':
                     os.execl(sys.executable, sys.executable, *sys.argv)
                 elif a == '3':
                     break
+                elif a == '4':
+                    try:
+                        cfg = work.read_file('config.txt', 4)
+                    except IndexError:
+                        cfg = 'off'
+                    task = ''
+                    while task != 'stop':
+                        if cfg == 'off':
+                            if input('Авто добавление заданий выключено! 1. Включить 2. Выйти\n') == '1':
+
+                                work.file_action("Дополнить", "config.txt", line_number=4, content_to_append='on')
+                                work.file_action("Дополнить", "config.txt", line_number=5,
+                                                 content_to_append=
+                                                 str(input('Раз во сколько минут нужно будет добавлять задания?'
+                                                           '\nВведите  число:')))
+                                print('Готово')
+                                cfg = 'on'
+                            else:
+                                task = 'stop'
+                        elif cfg == 'on':
+                            print('=====НАСТРОЙКИ=====')
+                            print('1. Отключить авто добавление заданий')
+                            print('2. Изменить время через которое будет автоматически добавлятся задание')
+                            print('3. Очистить все задания')
+                            print('4. Выход')
+                            print('===================')
+                            q = input('Введите номер пункта меню:')
+                            if q == '1':
+                                print('Это не очищяет список заданий на авто добавление')
+                                time.sleep(5)
+                                work.file_action("Дополнить", "config.txt", line_number=4, content_to_append='off')
+                                print('Перезагрузка....')
+                                time.sleep(1)
+                                os.execl(sys.executable, sys.executable, *sys.argv)
+                            elif q == '2':
+                                work.file_action("Дополнить", "config.txt", line_number=4,
+                                                 content_to_append=
+                                                 str(input('Раз во сколько минут нужно будет добавлять задания?'
+                                                           '\nВведите в число:')))
+                            elif q == '3':
+                                os.remove('task.dat')
+                            elif q == '4':
+                                task = 'stop'
+                            else:
+                                print('Я не понял число!')
+
+
+
+
                 else:
                     print('Я не понял число!')
+        elif a == '4':
+            print('Авто добавление заданий находится в стадии BETA тестирования и пока не поддерживает\n'
+                  'некоторый функционал.')
+            new_task = []
+            task = ''
+            while task != 'stop':
+                new_task.append(tokens[2])
+                new_task.append(input('\nvk - Вконтакте'
+                                      '\ninst - Instagram'
+                                      '\ntg - Telegram'
+                                      '\ntiktok - Tiktok'
+                                      '\nytview - Youtube просмотры'
+                                      '\nytlike - Youtube лайки'
+                                      '\nytsubs - Youtube подписчики'
+                                      '\nytcomm - Youtube комментарии\nВыберите соц сеть:').lower())
+                new_task.append(input('Введите сылку:').lower())
+                new_task.append(input('Введите количество выполнений:').lower())
+                new_task.append(input('Введите цену за 1 выполнение:').lower())
+                new_task.append(input('\nYoutube: -'
+                                      '\nВконтакте: like, repost, friend, group, view'
+                                      '\nInstagram: like, friend'
+                                      '\nTiktok: like, friend, view,'
+                                      '\nTelegram: view, like, group, poll\nНужно ввести то что после двоеточия '
+                                      '\nВыберите тип соцсети:').lower())
+                new_task.append(input('Какое количество раз нужно добавлять заказ? Введите число:'))
+                new_task.append(0) #сколько заданий уже выполнено
+                print('\n\n\n\n\n\n================Итог=========')
+                print('Токен используемый для авто добавления заказов: ***' +
+                      '\nСоц. сеть:' + str(new_task[1]) + '\nСлыка:' + str(new_task[2]) +
+                      '\nКоличество выполнений:' + str(new_task[3]) +
+                      '\nЦена за одно выполнение:' + str(new_task[4]) +
+                      '\nТип соц сети:' + str(new_task[5]) +
+                      '\nКоличество раз задание автоматически добавится:' + str(new_task[6]))
+                print('=============================')
+                if input('Все верно? 1. Да 2. Нет') == '2':
+                    print('Повторим')
+                else:
+                    work.save_list_to_file('task.dat', new_task)
+                    new_task = []
+                    if input('Это все? 1. Да 2. Нет\n') == '1':
+                        print('Ок')
+                        task = 'stop'
+                    else:
+                        print('\n\n\n\n\n\n\n')
 
         else:
             print('Я не понял число!')
