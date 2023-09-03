@@ -3,7 +3,8 @@ from telebot import types
 import work
 import random
 import time
-
+import sys
+import os
 import yt_monster_py
 
 state = ''
@@ -45,6 +46,7 @@ def start(tokens):
                                                         "Код продублирован в консоль еще раз)")
             print(text_tg_bot)
         else:
+            '''
             chat_id = message.chat.id
             message_text = ('Внимание! Данная врсия бота находится в стадии BETA теста')
             pinned_message = bot.get_chat(chat_id).pinned_message
@@ -52,15 +54,36 @@ def start(tokens):
                 sent_message = bot.send_message(chat_id, message_text)
                 bot.pin_chat_message(chat_id, sent_message.message_id)
             time.sleep(0.0001)
+            '''
             bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEINtRkGK9SK6pHQrYy1aKnW-6ZcmlEjQAC8zAAAiP1yEgwajIpJJRmtS8E')
             keyboard_reply = types.ReplyKeyboardMarkup(resize_keyboard=True)
             button1 = types.KeyboardButton("/restart (для перезагрузки бота)")
-            button2 = types.KeyboardButton("/unpin (для открепления сообщения)")
+            # button2 = types.KeyboardButton("/unpin (для открепления сообщения)")
             button3 = types.KeyboardButton("/start (для получения главного меню)")
-            keyboard_reply.add(button1, button2)
+            keyboard_reply.add(button1)
             keyboard_reply.add(button3)
             bot.send_message(message.chat.id, "Сообщение для обновления клавиатуры", reply_markup=keyboard_reply)
             bot.send_message(message.from_user.id, text="Привет! Выбери кнопку:", reply_markup=work.button_start())
+
+    @bot.message_handler(commands=["restart"])
+    def restart(message):
+        global state
+        state = 'restart'
+        bot.send_message(message.chat.id, "!ВНИМАНИЕ ПЕРЕЗАГРУЗКА МОЖЕТ НЕ РАБОТАТЬ НА НЕКОТОРЫХ СИСТЕМАХ!\nДля подтверждение введите команду /confirm")
+
+
+    @bot.message_handler(commands=["confirm"])
+    def restart(message):
+        global state
+        if state == 'restart':
+            bot.send_message(message.chat.id, 'Перезагрузка...')
+            time.sleep(1)
+            python = sys.executable
+            os.execl(python, python, *sys.argv)
+        else:
+            bot.send_message(message.chat.id, 'Вам нечего подтверждать')
+
+
 
     @bot.callback_query_handler(func=lambda call: True)
     def callback_worker(call):

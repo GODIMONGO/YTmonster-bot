@@ -1,11 +1,10 @@
 import work
 import yt_monster_py
-def version():
-    return 0.5
+version = 0.6
 
 def auto_add_task():
 
-    print('\nЗапуск авто таскера... Версия: ' + str(version()))
+    print('\nЗапуск авто добавления заданий... Версия: ' + str(version))
     a = 0
     task_lists = work.read_lists_from_file('task.dat')
     print('Считывание данных из файла')

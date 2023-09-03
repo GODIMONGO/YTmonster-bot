@@ -49,7 +49,7 @@ import threading
 from art import tprint
 from colorama import init
 init()
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 import tqdm
 import os
 import sys
@@ -114,7 +114,7 @@ while True:
         print("❗️❗️❗️ Токен " + TOKEN_NAMES[0] + ' введен с ошибкой ❗️❗️❗️')
         tokens[0] = input('Введите правильный токен ' + TOKEN_NAMES[0] + ':')
     else:
-        print(f"Токен " + TOKEN_NAMES[0] + 'верен!\n------')
+        print(f"Токен " + TOKEN_NAMES[0] + ' верен!\n------')
         break
 
 
@@ -125,7 +125,7 @@ while True:
         print("❗️❗️❗️ Токен " + TOKEN_NAMES[1] + ' введен с ошибкой ❗️❗️❗️')
         tokens[1] = input('Введите правильный токен ' + TOKEN_NAMES[1] + ':')
     else:
-        print(f"Токен " + TOKEN_NAMES[1] + 'верен!\n------')
+        print(f"Токен " + TOKEN_NAMES[1] + ' верен!\n------')
         break
 
 
@@ -137,7 +137,7 @@ while True:
         print("❗️❗️❗️ Токен " + TOKEN_NAMES[2] + ' введен с ошибкой ❗️❗️❗️')
         tokens[2] = input('Введите правильный токен ' + TOKEN_NAMES[2] + ':')
     else:
-        print(f"Токен " + TOKEN_NAMES[2] + 'верен!\n------')
+        print(f"Токен " + TOKEN_NAMES[2] + ' верен!\n------')
         break
 
 
@@ -247,13 +247,13 @@ if menu == '1':
                             elif q == '4':
                                 task = 'stop'
                             else:
-                                print('Я не понял число!')
+                                print('Я не понял цифру!')
 
 
 
 
                 else:
-                    print('Я не понял число!')
+                    print('Я не понял цифру!')
         elif a == '4':
             print('Авто добавление заданий находится в стадии BETA тестирования и пока не поддерживает\n'
                   'некоторый функционал.')
@@ -300,4 +300,4 @@ if menu == '1':
                         print('\n\n\n\n\n\n\n')
 
         else:
-            print('Я не понял число!')
+            print('Я не понял цифру!')
