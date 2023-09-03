@@ -37,6 +37,8 @@ https://t.me/pyTelegramBotAPI_talks_ru
 
 https://t.me/slair
 
+https://t.me/LuchkaPuchka
+
 Мой канал:
 
 https://t.me/GODIMONGO
